@@ -16,19 +16,19 @@ def Practica_3():
 
     #Cantidad de aplicaciones por categoria por año
     df2 = pd.read_csv(file_name)
-    df2 = df2[df2['Año de lanzamiento'].notna()]
+    df2['Año de lanzamiento'] = df2['Año de lanzamiento'].fillna(0).astype(np.int64)
+    df2 = df2[df2['Año de lanzamiento'] != 0]
     df_D = df2.groupby(["Año de lanzamiento","Categoria"])[['ID']].count()
     df_D.reset_index(inplace=True)
     df_D.set_index("Año de lanzamiento", inplace=True)
     df_D.to_csv('PlayStore_Operacion2.csv')
 
 
-    #Promedio de descargas para cada rating de cada categoria
+    #Inclusion de anuncios en las aplicaciones a lo largo de los años
     df3 = pd.read_csv(file_name)
-    df_P = df3.groupby(["Categoria", "Rating"])[['Maximo Instalaciones']].mean().round(0)
-    df_P = df_P.rename(columns={'Maximo Instalaciones': 'Promedio descargas'})
-    df_P.reset_index(inplace=True)
-    df_P.set_index("Categoria", inplace=True)
+    df3['Año de lanzamiento'] = df3['Año de lanzamiento'].fillna(0).astype(np.int64)
+    df3 = df3[df3['Año de lanzamiento'] != 0]
+    df_P = df3.groupby(["Año de lanzamiento"],as_index=False)["Contiene anuncios"].value_counts()
     df_P.to_csv('PlayStore_Operacion3.csv')
 
 
